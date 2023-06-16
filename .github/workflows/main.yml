@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+      - main-devon
 
 jobs:
   coverage:
