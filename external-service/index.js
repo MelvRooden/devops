@@ -6,6 +6,7 @@ const {
   connect,
   sendDirectExchange,
   consumeDirectExchange,
+  consumeFromQueue,
 } = require("../rabbitmq");
 
 const fd = require("form-data");
@@ -193,5 +194,10 @@ app.listen(port, async () => {
           .updateOne({ tagname: tag.tagname }, { $set: { score: score } });
       }
     );
+    await consumeFromQueue("deleteTagsOfTarget", TAG_TABLE, async (data) => {
+      db.collection(TAG_TABLE).deleteMany({
+        tagname: {$in: data.target.value.tags}
+      })
+    });
   }
 });

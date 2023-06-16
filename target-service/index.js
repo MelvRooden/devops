@@ -169,7 +169,17 @@ app.delete("/targets/delete/:targetname", hasOpaqueToken, async (req, res) => {
 
   if (!target) return res.status(404).json({ message: "Target not found" });
 
-  target.deleteOne({ targetname: targetname, username: username });
+  const deleted = await db.collection(TARGET_TABLE).findOneAndDelete({
+    targetname: targetname,
+    username: username,
+  });
+
+  await sendToQueue(
+    "deleteUserTarget",
+    JSON.stringify({ targetname: targetname, username: username })
+  );
+
+  await sendToQueue("deleteTagsOfTarget", JSON.stringify({ target: deleted }));
 
   await sendToQueue(
     "deleteUserTarget",
