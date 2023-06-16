@@ -2,7 +2,8 @@
   "scripts": {
     "start": "concurrently \"node ./api_gateway/index.js\" \"node ./auth-service/index.js\" \"node ./target-service/index.js\" \"node ./external-service/index.js\"",
     "test": "jest",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "dev": "nodemon -r dotenv/config ./bin/www"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
