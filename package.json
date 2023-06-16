@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "concurrently \"node ./api_gateway/index.js\" \"node ./auth-service/index.js\" \"node ./target-service/index.js\" \"node ./external-service/index.js\""
+    "start": "concurrently \"node ./api_gateway/index.js\" \"node ./auth-service/index.js\" \"node ./target-service/index.js\" \"node ./external-service/index.js\"",
+    "test": "jest"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
@@ -20,7 +21,6 @@
     "got": "^12.6.0",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "jest": "^29.5.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb-memory-server": "^8.12.2",
     "mongoose": "^7.0.1",
@@ -30,7 +30,20 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "path": "^0.12.7",
-    "proxy": "^1.0.2",
+    "proxy": "^1.0.2"
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^4.1.7",
+    "eslint": "^8.42.0",
+    "jest": "^29.5.0",
+    "jest-mock-req-res": "^1.0.2",
     "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "preset": "@shelf/jest-mongodb",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

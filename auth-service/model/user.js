@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  targets: [
+    {
+      type: String,
+    },
+  ],
 });
 mongoose.model(USER_TABLE, userSchema);
 

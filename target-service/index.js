@@ -3,13 +3,22 @@ const app = express();
 const mongoose = require("mongoose");
 require("dotenv").config();
 const { hasOpaqueToken } = require("../middleware/auth");
+const {
+  connect,
+  sendToQueue,
+  consumeFromQueue,
+  consumeDirectExchange,
+  sendDirectExchange,
+} = require("../rabbitmq");
+const fs = require("fs");
 
-const port = process.env.TARGET_SERVICE_PORT;
+const port = process.env.TARGET_SERVICE_PORT || 3002;
 
 const Target = require("./model/target");
 
 const bodyParser = require("body-parser");
 const multer = require("multer");
+const path = require("path");
 
 require("./mongooseconnection");
 const db = mongoose.connection;
@@ -30,6 +39,13 @@ const upload = multer({ storage: storage });
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+const removeFile = (imageFilePath) => {
+  const fileBuffalo = Buffer.from(imageFilePath).toString("utf-8");
+  fs.unlinkSync(path.join(__dirname, "..", fileBuffalo));
+};
+
+let connection;
+
 app.get("/targets", hasOpaqueToken, async (req, res) => {
   const { size = 10, page = 1 } = req.query;
 
@@ -37,14 +53,21 @@ app.get("/targets", hasOpaqueToken, async (req, res) => {
 
   if (size && page) {
     const limit = parseInt(size) <= 0 ? 10 : parseInt(size);
-    const pagenum = parseInt(page) <= 0 ? 1 : parseInt(page);
-    const skip = (pagenum - 1) * limit;
+    let pageNum = parseInt(page) <= 0 ? 1 : parseInt(page);
+    const skip = (pageNum - 1) * limit;
     query.limit(limit).skip(skip);
   }
 
   const targets = await query.exec();
 
-  return res.json({ count: targets.length, data: targets });
+  return res.json({
+    count: targets.length,
+    pagination: {
+      page: parseInt(page),
+      size: parseInt(size),
+    },
+    data: targets,
+  });
 });
 
 app.post(
@@ -55,33 +78,39 @@ app.post(
     const { targetname, description, placename } = req.body;
     const imageFilePath = req.file.path;
 
-    if (!targetname)
+    if (!targetname) {
       return res.status(400).json({ message: "targetname is required" });
+    }
+    if (!description) {
+      return res.status(400).json({ message: "description is required" });
+    }
+    if (!placename) {
+      return res.status(400).json({ message: "placename is required" });
+    }
+    if (!imageFilePath) {
+      return res.status(400).json({ message: "image is required" });
+    }
 
     const findTarget = await db
       .collection(TARGET_TABLE)
       .findOne({ targetname: targetname });
 
     if (findTarget) {
+      removeFile(imageFilePath);
       return res.status(409).json({
         message: "Target name is already in use",
       });
     }
 
-    if (!description)
-      return res.status(400).json({ message: "description is required" });
-    if (!placename)
-      return res.status(400).json({ message: "placename is required" });
-    if (!imageFilePath)
-      return res.status(400).json({ message: "image is required" });
     if (
       req.file.mimetype !== "image/png" &&
       req.file.mimetype !== "image/jpeg" &&
       req.file.mimetype !== "image/jpg"
     ) {
+      removeFile(imageFilePath);
       return res
         .status(400)
-        .json("Invalid file type, it should be png, jpeg, jpg");
+        .json({ message: "Invalid file type, it should be png, jpeg, jpg" });
     }
 
     const username = req.headers.username;
@@ -92,10 +121,11 @@ app.post(
       placename: placename,
       image: imageFilePath,
       username: username,
+      tags: [],
     };
 
-    const targets = await db.collection(TARGET_TABLE);
-    targets.insertOne(newTarget);
+    await sendToQueue("targets", JSON.stringify(newTarget));
+    await sendToQueue("userTargets", JSON.stringify(newTarget));
 
     return res.json({ message: "Target has been created!" });
   }
@@ -120,23 +150,6 @@ app.get("/targets/fieldvalueof", hasOpaqueToken, async (req, res) => {
   return res.json({ data: targets[field] });
 });
 
-app.post("/targets/create", hasOpaqueToken, async (req, res) => {
-  const { targetname: targetname, description, placename, image } = req.body;
-
-  if (!targetname)
-    return res.status(400).json({ message: "targetname is required" });
-
-  const findTarget = await db
-    .collection(TARGET_TABLE)
-    .findOne({ targetname: targetname });
-
-  if (findTarget) {
-    return res.status(409).json({
-      message: "target name is already in use",
-    });
-  }
-});
-
 app.get("/targets/placename/:placename", hasOpaqueToken, async (req, res) => {
   const { placename } = req.params;
 
@@ -158,11 +171,52 @@ app.delete("/targets/delete/:targetname", hasOpaqueToken, async (req, res) => {
 
   target.deleteOne({ targetname: targetname, username: username });
 
+  await sendToQueue(
+    "deleteUserTarget",
+    JSON.stringify({ targetname: targetname, username: username })
+  );
+
   return res
     .status(204)
     .json({ message: "Target has been successfully deleted" });
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Target service: ${port}`);
+
+  const connection = await connect();
+
+  if (!connection) {
+    console.log("RabbitMQ is not connected");
+    res.json({ message: "RabbitMQ is not connected" });
+  } else {
+    await consumeFromQueue("targets", TARGET_TABLE, async (data) => {
+      await db.collection(TARGET_TABLE).insertOne(data);
+    });
+
+    await consumeFromQueue("tagTarget", TARGET_TABLE, async (data) => {
+      await db.collection(TARGET_TABLE).findOne({ username: data.username });
+    });
+
+    await consumeDirectExchange(
+      "tags",
+      TARGET_TABLE,
+      "tag_target",
+      async (data, dbName) => {
+        const target = await db
+          .collection(dbName)
+          .findOneAndUpdate(
+            { targetname: data.targetname },
+            { $push: { tags: data.tagname } }
+          );
+        if (target !== null) {
+          await sendDirectExchange(
+            "tags",
+            JSON.stringify({ target: target, tagname: data.tagname }),
+            "target_results"
+          );
+        }
+      }
+    );
+  }
 });

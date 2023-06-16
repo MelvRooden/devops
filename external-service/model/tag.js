@@ -12,11 +12,15 @@ const tagSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  username: {
+    type: String,
+    required: true,
+  },
   targetname: {
     type: String,
     required: true,
   },
-  username: {
+  score: {
     type: String,
     required: true,
   },

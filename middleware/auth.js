@@ -7,7 +7,8 @@ const isAuthorized = (req, res, next) => {
     return res.status(400).send("Auth token not found");
   }
 
-  const token = authHeader.split(" ")[1]; // Heel barbaars dit
+  const token = authHeader.split(" ")[1];
+
   jwt.verify(token, process.env.JWT_SECRET, (error, decodedToken) => {
     if (error) {
       return res.status(401).send("Invalid token");

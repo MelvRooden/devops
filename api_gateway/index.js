@@ -7,11 +7,14 @@ require("dotenv").config();
 const { isAuthorized, hasRole } = require("../middleware/auth");
 const multer = require("multer");
 
-const port = process.env.API_GATEWAY_PORT;
+const port = process.env.API_GATEWAY_PORT || 3000;
 
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
-const TARGET_SERVICE_URL = process.env.TARGET_SERVICE_URL;
-const EXTERNAL_SERVICE_URL = process.env.EXTERNAL_SERVICE_URL;
+const AUTH_SERVICE_URL =
+  process.env.AUTH_SERVICE_URL || "http://127.0.0.1:3001";
+const TARGET_SERVICE_URL =
+  process.env.TARGET_SERVICE_URL || "http://127.0.0.1:3002";
+const EXTERNAL_SERVICE_URL =
+  process.env.EXTERNAL_SERVICE_URL || "http://127.0.0.1:3003";
 
 const upload = multer();
 const fd = require("form-data");
@@ -31,8 +34,8 @@ app.post("/login", async (req, res) => {
   } catch (e) {
     console.error(e);
     return res
-      .status(e?.response?.status ?? 500)
-      .json({ message: e?.response?.data?.message ?? "Internal server error" });
+      .status(e?.response?.status || 500)
+      .json({ message: e?.response?.data?.message || "Internal server error" });
   }
 });
 
@@ -51,8 +54,8 @@ app.post("/register", async (req, res) => {
   } catch (e) {
     console.error(e);
     return res
-      .status(e?.response?.status ?? 500)
-      .json({ message: e?.response?.data?.message ?? "Internal server error" });
+      .status(e?.response?.status || 500)
+      .json({ message: e?.response?.data?.message || "Internal server error" });
   }
 });
 // #endregion auth-service
@@ -74,23 +77,26 @@ app.get("/targets", async (req, res) => {
   } catch (e) {
     console.error(e);
     return res
-      .status(e?.response?.status ?? 500)
-      .json({ message: e?.response?.data?.message ?? "Internal server error" });
+      .status(e?.response?.status || 500)
+      .json({ message: e?.response?.data?.message || "Internal server error" });
   }
 });
 
 app.get("/targets/fieldvalueof", async (req, res) => {
   try {
-    const {targetname, field } = req.query;
-    const response = await axios.get(`${TARGET_SERVICE_URL}/targets/fieldvalueof`, {
-      params: {
-        targetname: targetname,
-        field: field,
-      },
-      headers: {
-        opaque_token: process.env.OPAQUE_TOKEN,
-      },
-    });
+    const { targetname, field } = req.query;
+    const response = await axios.get(
+      `${TARGET_SERVICE_URL}/targets/fieldvalueof`,
+      {
+        params: {
+          targetname: targetname,
+          field: field,
+        },
+        headers: {
+          opaque_token: process.env.OPAQUE_TOKEN,
+        },
+      }
+    );
     return res.json(response.data);
   } catch (e) {
     console.error(e);
@@ -130,8 +136,8 @@ app.post(
       return res.json(response.data);
     } catch (e) {
       console.error(e);
-      return res.status(e?.response?.status ?? 500).json({
-        message: e?.response?.data?.message ?? "Internal server error",
+      return res.status(e?.response?.status || 500).json({
+        message: e?.response?.data?.message || "Internal server error",
       });
     }
   }
@@ -152,8 +158,8 @@ app.get("/targets/placename/:placename", async (req, res) => {
   } catch (e) {
     console.error(e);
     return res
-      .status(e?.response?.status ?? 500)
-      .json({ message: e?.response?.data?.message ?? "Internal server error" });
+      .status(e?.response?.status || 500)
+      .json({ message: e?.response?.data?.message || "Internal server error" });
   }
 });
 
@@ -176,8 +182,8 @@ app.delete(
       return res.status(response.status).json({ message: response.message });
     } catch (e) {
       console.error(e);
-      return res.status(e?.response?.status ?? 500).json({
-        message: e?.response?.data?.message ?? "Internal server error",
+      return res.status(e?.response?.status || 500).json({
+        message: e?.response?.data?.message || "Internal server error",
       });
     }
   }
@@ -186,7 +192,7 @@ app.delete(
 
 // #region external-service
 app.post(
-  "/tag",
+  "/tag/create",
   isAuthorized,
   hasRole(["admin", "user"]),
   upload.single("image"),
@@ -199,21 +205,43 @@ app.post(
         filename: req.file.originalname,
         contentType: req.file.mimetype,
       });
-      const response = await axios.post(`${EXTERNAL_SERVICE_URL}/tag`, body, {
-        headers: {
-          opaque_token: process.env.OPAQUE_TOKEN,
-          username: req.user.username,
-        },
-      });
+
+      const response = await axios.post(
+        `${EXTERNAL_SERVICE_URL}/tag/create`,
+        body,
+        {
+          headers: {
+            opaque_token: process.env.OPAQUE_TOKEN,
+            username: req.user.username,
+          },
+        }
+      );
       return res.json(response.data);
     } catch (e) {
       console.error(e);
-      return res.status(e?.response?.status ?? 500).json({
-        message: e?.response?.data?.message ?? "Internal server error",
+      return res.status(e?.response?.status || 500).json({
+        message: e?.response?.data?.message || "Internal server error",
       });
     }
   }
 );
+
+app.get("/tag/:name", isAuthorized, hasRole(["admin", "user"]), async (req, res) => {
+  try {
+    const { name } = req.params;
+    const response = await axios.get(`${EXTERNAL_SERVICE_URL}/tag/${name}`, {
+      headers: {
+        opaque_token: process.env.OPAQUE_TOKEN,
+      },
+    });
+    return res.json(response.data);
+  } catch (e) {
+    console.error(e);
+    return res.status(e?.response?.status || 500).json({
+      message: e?.response?.data?.message || "Internal server error",
+    });
+  }
+});
 // #endregion
 
 app.listen(port, async () => {

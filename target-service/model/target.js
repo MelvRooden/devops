@@ -30,6 +30,11 @@ const targetSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  tags: [
+    {
+      type: String,
+    },
+  ],
 });
 
 mongoose.model(TARGET_TABLE, targetSchema);
