@@ -134,7 +134,7 @@ app.post(
 app.get("/targets/fieldvalueof", hasOpaqueToken, async (req, res) => {
   const { targetname, field } = req.query;
 
-  if (!target || !field)
+  if (!targetname || !field)
     return res
       .status(400)
       .json({ message: "Must submit a targetname and a field" });
