@@ -21,29 +21,29 @@ services:
     build:
       context: .
       dockerfile: api_gateway.dockerfile
-    command: sh -c "npm install && npm run api_gateway"
+    env_file: ./.env
     ports:
       - 3000:3000
     volumes:
       - /api_gateway:/api_gateway
       - /public:/public
     environment:
-      - API_GATEWAY_URL=http://127.0.0.1:3000
-      - API_GATEWAY_PORT=3000
-      - AUTH_SERVICE_URL=http://127.0.0.1:3001
-      - AUTH_SERVICE_PORT=3001
-      - TARGET_SERVICE_URL=http://127.0.0.1:3002
-      - TARGET_SERVICE_PORT=3002
-      - EXTERNAL_SERVICE_URL=http://127.0.0.1:3003
-      - EXTERNAL_SERVICE_PORT=3003
-      - OPAQUE_TOKEN=0681275556
-      - JWT_SECRET=melsslaapritme
-      - AUTH_SERVICE_DB=mongodb://127.0.0.1:27017/auth
-      - TARGET_SERVICE_DB=mongodb://127.0.0.1:27017/target
-      - EXTERNAL_SERVICE_DB=mongodb://127.0.0.1:27017/external
-      - RABBIT_MQ=amqp://127.0.0.1:5672
-      - QUEUE_EXPOSE_TAG=exposeTag
-      - QUEUE_EXPOSE_TARGET=exposeTarget
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
+      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
+      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
+      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      OPAQUE_TOKEN: ${OPAQUE_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
+      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
+      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      RABBIT_MQ: ${RABBIT_MQ}
+      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
+      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -61,29 +61,29 @@ services:
     build:
       context: .
       dockerfile: auth_service.dockerfile
-    command: sh -c "npm install && npm run auth_service"
+    env_file: ./.env
     ports:
       - 3001:3001
     volumes:
       - /auth-service:/auth_service
       - /public:/public
     environment:
-      - API_GATEWAY_URL=http://127.0.0.1:3000
-      - API_GATEWAY_PORT=3000
-      - AUTH_SERVICE_URL=http://127.0.0.1:3001
-      - AUTH_SERVICE_PORT=3001
-      - TARGET_SERVICE_URL=http://127.0.0.1:3002
-      - TARGET_SERVICE_PORT=3002
-      - EXTERNAL_SERVICE_URL=http://127.0.0.1:3003
-      - EXTERNAL_SERVICE_PORT=3003
-      - OPAQUE_TOKEN=0681275556
-      - JWT_SECRET=melsslaapritme
-      - AUTH_SERVICE_DB=mongodb://127.0.0.1:27017/auth
-      - TARGET_SERVICE_DB=mongodb://127.0.0.1:27017/target
-      - EXTERNAL_SERVICE_DB=mongodb://127.0.0.1:27017/external
-      - RABBIT_MQ=amqp://127.0.0.1:5672
-      - QUEUE_EXPOSE_TAG=exposeTag
-      - QUEUE_EXPOSE_TARGET=exposeTarget
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
+      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
+      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
+      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      OPAQUE_TOKEN: ${OPAQUE_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
+      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
+      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      RABBIT_MQ: ${RABBIT_MQ}
+      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
+      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -95,29 +95,29 @@ services:
     build:
       context: .
       dockerfile: target_service.dockerfile
-    command: sh -c "npm install && npm run target_service"
+    env_file: ./.env
     ports:
       - 3002:3002
     volumes:
       - /target-service:/target_service
       - /public:/public
     environment:
-      - API_GATEWAY_URL=http://127.0.0.1:3000
-      - API_GATEWAY_PORT=3000
-      - AUTH_SERVICE_URL=http://127.0.0.1:3001
-      - AUTH_SERVICE_PORT=3001
-      - TARGET_SERVICE_URL=http://127.0.0.1:3002
-      - TARGET_SERVICE_PORT=3002
-      - EXTERNAL_SERVICE_URL=http://127.0.0.1:3003
-      - EXTERNAL_SERVICE_PORT=3003
-      - OPAQUE_TOKEN=0681275556
-      - JWT_SECRET=melsslaapritme
-      - AUTH_SERVICE_DB=mongodb://127.0.0.1:27017/auth
-      - TARGET_SERVICE_DB=mongodb://127.0.0.1:27017/target
-      - EXTERNAL_SERVICE_DB=mongodb://127.0.0.1:27017/external
-      - RABBIT_MQ=amqp://127.0.0.1:5672
-      - QUEUE_EXPOSE_TAG=exposeTag
-      - QUEUE_EXPOSE_TARGET=exposeTarget
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
+      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
+      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
+      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      OPAQUE_TOKEN: ${OPAQUE_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
+      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
+      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      RABBIT_MQ: ${RABBIT_MQ}
+      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
+      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -129,29 +129,29 @@ services:
     build:
       context: .
       dockerfile: external_service.dockerfile
-    command: sh -c "npm install && npm run external_service"
+    env_file: ./.env
     ports:
       - 3003:3003
     volumes:
       - /external-service:/external_service
       - /public:/public
     environment:
-      - API_GATEWAY_URL=http://127.0.0.1:3000
-      - API_GATEWAY_PORT=3000
-      - AUTH_SERVICE_URL=http://127.0.0.1:3001
-      - AUTH_SERVICE_PORT=3001
-      - TARGET_SERVICE_URL=http://127.0.0.1:3002
-      - TARGET_SERVICE_PORT=3002
-      - EXTERNAL_SERVICE_URL=http://127.0.0.1:3003
-      - EXTERNAL_SERVICE_PORT=3003
-      - OPAQUE_TOKEN=0681275556
-      - JWT_SECRET=melsslaapritme
-      - AUTH_SERVICE_DB=mongodb://127.0.0.1:27017/auth
-      - TARGET_SERVICE_DB=mongodb://127.0.0.1:27017/target
-      - EXTERNAL_SERVICE_DB=mongodb://127.0.0.1:27017/external
-      - RABBIT_MQ=amqp://127.0.0.1:5672
-      - QUEUE_EXPOSE_TAG=exposeTag
-      - QUEUE_EXPOSE_TARGET=exposeTarget
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
+      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
+      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
+      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
+      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
+      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      OPAQUE_TOKEN: ${OPAQUE_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
+      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
+      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      RABBIT_MQ: ${RABBIT_MQ}
+      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
+      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
