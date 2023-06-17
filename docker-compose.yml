@@ -42,8 +42,6 @@ services:
       TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
       EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
       RABBIT_MQ: ${RABBIT_MQ}
-      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
-      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -82,8 +80,6 @@ services:
       TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
       EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
       RABBIT_MQ: ${RABBIT_MQ}
-      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
-      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -116,8 +112,6 @@ services:
       TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
       EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
       RABBIT_MQ: ${RABBIT_MQ}
-      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
-      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -150,8 +144,6 @@ services:
       TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
       EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
       RABBIT_MQ: ${RABBIT_MQ}
-      QUEUE_EXPOSE_TAG: ${QUEUE_EXPOSE_TAG}
-      QUEUE_EXPOSE_TARGET: ${QUEUE_EXPOSE_TARGET}
     depends_on:
       rabbitmq:
         condition: service_healthy
