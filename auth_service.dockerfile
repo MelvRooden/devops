@@ -3,8 +3,8 @@ FROM node:18
 WORKDIR /app
 
 COPY auth-service ./auth_service
-COPY package.json ./
 COPY middleware ./middleware
+COPY package.json ./
 COPY rabbitmq.js ./
 
 RUN npm i
