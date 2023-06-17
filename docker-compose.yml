@@ -47,10 +47,14 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      - mongo
-      - auth_service
-      - target_service
-      - external_service
+      mongo:
+        condition: service_started
+      auth_service:
+        condition: service_started
+      target_service:
+        condition: service_started
+      external_service:
+        condition: service_started
     restart: on-failure
 
   auth_service:
@@ -81,9 +85,10 @@ services:
       - QUEUE_EXPOSE_TAG=exposeTag
       - QUEUE_EXPOSE_TARGET=exposeTarget
     depends_on:
-      - mongo
       rabbitmq:
         condition: service_healthy
+      mongo:
+        condition: service_started
     restart: on-failure
 
   target_service:
@@ -114,9 +119,10 @@ services:
       - QUEUE_EXPOSE_TAG=exposeTag
       - QUEUE_EXPOSE_TARGET=exposeTarget
     depends_on:
-      - mongo
       rabbitmq:
         condition: service_healthy
+      mongo:
+        condition: service_started
     restart: on-failure
 
   external_service:
@@ -147,7 +153,8 @@ services:
       - QUEUE_EXPOSE_TAG=exposeTag
       - QUEUE_EXPOSE_TARGET=exposeTarget
     depends_on:
-      - mongo
       rabbitmq:
         condition: service_healthy
+      mongo:
+        condition: service_started
     restart: on-failure
