@@ -167,11 +167,27 @@ services:
     ports:
       - 9090:9090
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
-
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      auth_service:
+        condition: service_started
+      target_service:
+        condition: service_started
+      external_service:
+        condition: service_started
+    restart: on-failure
+    
   grafana:
     build: ./grafana
     ports:
       - 3000:3000
+    depends_on:
+      prometheus:
+        condition: service_started
+    restart: on-failure
 
 volumes:
   prometheus-data:
