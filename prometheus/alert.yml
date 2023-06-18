@@ -1,0 +1,6 @@
+groups:
+  - name: Alerts
+    rules:
+      - alert: "On api - Gateway: down"
+        expr: up{job="api_gateway"} < 1
+        for: 15s
