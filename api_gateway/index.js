@@ -22,6 +22,18 @@ const fd = require("form-data");
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+const promBundle = require("express-prom-bundle");
+const metricsMiddleware = promBundle({
+  includePath: true,
+  includeStatusCode: true,
+  normalizePath: true,
+  promClient: {
+    collectDefaultMetrics: {}
+  }
+});
+
+app.use(metricsMiddleware);
+
 // #region auth-service
 app.post("/login", async (req, res) => {
   try {
