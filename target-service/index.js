@@ -12,7 +12,7 @@ const {
 } = require("../rabbitmq");
 const fs = require("fs");
 
-const port = process.env.TARGET_SERVICE_PORT || 3002;
+const port = process.env.target-service_PORT || 3002;
 
 const Target = require("./model/target");
 

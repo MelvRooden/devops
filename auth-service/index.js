@@ -21,7 +21,7 @@ const jwtOptions = {
   secretOrKey: process.env.JWT_SECRET,
 };
 
-const port = process.env.AUTH_SERVICE_PORT || 3001;
+const port = process.env.auth-service_PORT || 3001;
 
 app.use(express.json());
 

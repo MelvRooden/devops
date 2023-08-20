@@ -7,14 +7,14 @@ require("dotenv").config();
 const { isAuthorized, hasRole } = require("../middleware/auth");
 const multer = require("multer");
 
-const port = process.env.API_GATEWAY_PORT || 3000;
+const port = process.env.api-gateway_PORT || 3000;
 
-const AUTH_SERVICE_URL =
-  process.env.AUTH_SERVICE_URL || "http://127.0.0.1:3001";
-const TARGET_SERVICE_URL =
-  process.env.TARGET_SERVICE_URL || "http://127.0.0.1:3002";
-const EXTERNAL_SERVICE_URL =
-  process.env.EXTERNAL_SERVICE_URL || "http://127.0.0.1:3003";
+const auth-service_URL =
+  process.env.auth-service_URL || "http://127.0.0.1:3001";
+const target-service_URL =
+  process.env.target-service_URL || "http://127.0.0.1:3002";
+const external-service_URL =
+  process.env.external-service_URL || "http://127.0.0.1:3003";
 
 const upload = multer();
 const fd = require("form-data");
@@ -37,7 +37,7 @@ app.use(metricsMiddleware);
 // #region auth-service
 app.post("/login", async (req, res) => {
   try {
-    const response = await axios.post(`${AUTH_SERVICE_URL}/login`, req.body, {
+    const response = await axios.post(`${auth-service_URL}/login`, req.body, {
       headers: {
         opaque_token: process.env.OPAQUE_TOKEN,
       },
@@ -54,7 +54,7 @@ app.post("/login", async (req, res) => {
 app.post("/register", async (req, res) => {
   try {
     const response = await axios.post(
-      `${AUTH_SERVICE_URL}/register`,
+      `${auth-service_URL}/register`,
       req.body,
       {
         headers: {
@@ -76,7 +76,7 @@ app.post("/register", async (req, res) => {
 app.get("/targets", async (req, res) => {
   try {
     const { size, page } = req.query;
-    const response = await axios.get(`${TARGET_SERVICE_URL}/targets`, {
+    const response = await axios.get(`${target-service_URL}/targets`, {
       params: {
         size: size,
         page: page,
@@ -98,7 +98,7 @@ app.get("/targets/fieldvalueof", async (req, res) => {
   try {
     const { targetname, field } = req.query;
     const response = await axios.get(
-      `${TARGET_SERVICE_URL}/targets/fieldvalueof`,
+      `${target-service_URL}/targets/fieldvalueof`,
       {
         params: {
           targetname: targetname,
@@ -136,7 +136,7 @@ app.post(
       });
 
       const response = await axios.post(
-        `${TARGET_SERVICE_URL}/targets/create`,
+        `${target-service_URL}/targets/create`,
         body,
         {
           headers: {
@@ -159,7 +159,7 @@ app.get("/targets/placename/:placename", async (req, res) => {
   try {
     const { placename } = req.params;
     const response = await axios.get(
-      `${TARGET_SERVICE_URL}/targets/placename/${placename}`,
+      `${target-service_URL}/targets/placename/${placename}`,
       {
         headers: {
           opaque_token: process.env.OPAQUE_TOKEN,
@@ -183,7 +183,7 @@ app.delete(
     try {
       const { targetname } = req.params;
       const response = await axios.delete(
-        `${TARGET_SERVICE_URL}/targets/delete/${targetname}`,
+        `${target-service_URL}/targets/delete/${targetname}`,
         {
           headers: {
             opaque_token: process.env.OPAQUE_TOKEN,
@@ -219,7 +219,7 @@ app.post(
       });
 
       const response = await axios.post(
-        `${EXTERNAL_SERVICE_URL}/tag/create`,
+        `${external-service_URL}/tag/create`,
         body,
         {
           headers: {
@@ -241,7 +241,7 @@ app.post(
 app.get("/tag/:name", isAuthorized, hasRole(["admin", "user"]), async (req, res) => {
   try {
     const { name } = req.params;
-    const response = await axios.get(`${EXTERNAL_SERVICE_URL}/tag/${name}`, {
+    const response = await axios.get(`${external-service_URL}/tag/${name}`, {
       headers: {
         opaque_token: process.env.OPAQUE_TOKEN,
       },

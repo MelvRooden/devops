@@ -24,7 +24,7 @@ const Tag = require("./model/tag");
 const path = require("path");
 const TAG_TABLE = "tags";
 
-const port = process.env.EXTERNAL_SERVICE_PORT || 3003;
+const port = process.env.external-service_PORT || 3003;
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

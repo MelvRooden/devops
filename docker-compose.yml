@@ -9,7 +9,7 @@ services:
     volumes:
       - ./data/db:/data/db
 
-  db_exporter:
+  db-exporter:
       image: bitnami/mongodb-exporter:0.11
       environment:
         - MONGODB_URI=mongodb://mongodb:27017
@@ -25,68 +25,68 @@ services:
       timeout: 20s
       retries: 5
   
-  api_gateway:
+  api-gateway:
     build:
       context: .
-      dockerfile: api_gateway.dockerfile
+      dockerfile: api-gateway.dockerfile
     env_file: ./.env
     ports:
       - 3010:3010
     volumes:
-      - /api_gateway:/api_gateway
+      - /api-gateway:/api-gateway
       - /public/uploads:/app/public/uploads
     environment:
-      API_GATEWAY_URL: ${API_GATEWAY_URL}
-      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
-      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
-      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
-      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
-      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
-      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
-      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      api-gateway_URL: ${api-gateway_URL}
+      api-gateway_PORT: ${api-gateway_PORT}
+      auth-service_URL: ${auth-service_URL}
+      auth-service_PORT: ${auth-service_PORT}
+      target-service_URL: ${target-service_URL}
+      target-service_PORT: ${target-service_PORT}
+      external-service_URL: ${external-service_URL}
+      external-service_PORT: ${external-service_PORT}
       OPAQUE_TOKEN: ${OPAQUE_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
-      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
-      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
-      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      auth-service_DB: ${auth-service_DB}
+      target-service_DB: ${target-service_DB}
+      external-service_DB: ${external-service_DB}
       RABBIT_MQ: ${RABBIT_MQ}
     depends_on:
       rabbitmq:
         condition: service_healthy
       mongo:
         condition: service_started
-      auth_service:
+      auth-service:
         condition: service_started
-      target_service:
+      target-service:
         condition: service_started
-      external_service:
+      external-service:
         condition: service_started
     restart: on-failure
 
-  auth_service:
+  auth-service:
     build:
       context: .
-      dockerfile: auth_service.dockerfile
+      dockerfile: auth-service.dockerfile
     env_file: ./.env
     ports:
       - 3001:3001
     volumes:
-      - /auth-service:/auth_service
+      - /auth-service:/auth-service
       - /public/uploads:/app/public/uploads
     environment:
-      API_GATEWAY_URL: ${API_GATEWAY_URL}
-      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
-      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
-      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
-      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
-      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
-      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
-      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      api-gateway_URL: ${api-gateway_URL}
+      api-gateway_PORT: ${api-gateway_PORT}
+      auth-service_URL: ${auth-service_URL}
+      auth-service_PORT: ${auth-service_PORT}
+      target-service_URL: ${target-service_URL}
+      target-service_PORT: ${target-service_PORT}
+      external-service_URL: ${external-service_URL}
+      external-service_PORT: ${external-service_PORT}
       OPAQUE_TOKEN: ${OPAQUE_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
-      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
-      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
-      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      auth-service_DB: ${auth-service_DB}
+      target-service_DB: ${target-service_DB}
+      external-service_DB: ${external-service_DB}
       RABBIT_MQ: ${RABBIT_MQ}
     depends_on:
       rabbitmq:
@@ -95,30 +95,30 @@ services:
         condition: service_started
     restart: on-failure
 
-  target_service:
+  target-service:
     build:
       context: .
-      dockerfile: target_service.dockerfile
+      dockerfile: target-service.dockerfile
     env_file: ./.env
     ports:
       - 3002:3002
     volumes:
-      - /target-service:/target_service
+      - /target-service:/target-service
       - /public/uploads:/app/public/uploads
     environment:
-      API_GATEWAY_URL: ${API_GATEWAY_URL}
-      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
-      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
-      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
-      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
-      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
-      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
-      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      api-gateway_URL: ${api-gateway_URL}
+      api-gateway_PORT: ${api-gateway_PORT}
+      auth-service_URL: ${auth-service_URL}
+      auth-service_PORT: ${auth-service_PORT}
+      target-service_URL: ${target-service_URL}
+      target-service_PORT: ${target-service_PORT}
+      external-service_URL: ${external-service_URL}
+      external-service_PORT: ${external-service_PORT}
       OPAQUE_TOKEN: ${OPAQUE_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
-      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
-      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
-      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      auth-service_DB: ${auth-service_DB}
+      target-service_DB: ${target-service_DB}
+      external-service_DB: ${external-service_DB}
       RABBIT_MQ: ${RABBIT_MQ}
     depends_on:
       rabbitmq:
@@ -127,30 +127,30 @@ services:
         condition: service_started
     restart: on-failure
 
-  external_service:
+  external-service:
     build:
       context: .
-      dockerfile: external_service.dockerfile
+      dockerfile: external-service.dockerfile
     env_file: ./.env
     ports:
       - 3003:3003
     volumes:
-      - /external-service:/external_service
+      - /external-service:/external-service
       - /public/uploads:/app/public/uploads
     environment:
-      API_GATEWAY_URL: ${API_GATEWAY_URL}
-      API_GATEWAY_PORT: ${API_GATEWAY_PORT}
-      AUTH_SERVICE_URL: ${AUTH_SERVICE_URL}
-      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
-      TARGET_SERVICE_URL: ${TARGET_SERVICE_URL}
-      TARGET_SERVICE_PORT: ${TARGET_SERVICE_PORT}
-      EXTERNAL_SERVICE_URL: ${EXTERNAL_SERVICE_URL}
-      EXTERNAL_SERVICE_PORT: ${EXTERNAL_SERVICE_PORT}
+      api-gateway_URL: ${api-gateway_URL}
+      api-gateway_PORT: ${api-gateway_PORT}
+      auth-service_URL: ${auth-service_URL}
+      auth-service_PORT: ${auth-service_PORT}
+      target-service_URL: ${target-service_URL}
+      target-service_PORT: ${target-service_PORT}
+      external-service_URL: ${external-service_URL}
+      external-service_PORT: ${external-service_PORT}
       OPAQUE_TOKEN: ${OPAQUE_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
-      AUTH_SERVICE_DB: ${AUTH_SERVICE_DB}
-      TARGET_SERVICE_DB: ${TARGET_SERVICE_DB}
-      EXTERNAL_SERVICE_DB: ${EXTERNAL_SERVICE_DB}
+      auth-service_DB: ${auth-service_DB}
+      target-service_DB: ${target-service_DB}
+      external-service_DB: ${external-service_DB}
       RABBIT_MQ: ${RABBIT_MQ}
     depends_on:
       rabbitmq:
@@ -172,11 +172,11 @@ services:
         condition: service_healthy
       mongo:
         condition: service_started
-      auth_service:
+      auth-service:
         condition: service_started
-      target_service:
+      target-service:
         condition: service_started
-      external_service:
+      external-service:
         condition: service_started
     restart: on-failure
     
