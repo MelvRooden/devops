@@ -9,7 +9,7 @@ services:
     volumes:
       - ./data/db:/data/db
 
-  db_exporter:
+  db-exporter:
       image: bitnami/mongodb-exporter:0.11
       environment:
         - MONGODB_URI=mongodb://mongodb:27017
@@ -25,7 +25,7 @@ services:
       timeout: 20s
       retries: 5
   
-  api_gateway:
+  api-gateway:
     build:
       context: .
       dockerfile: api_gateway.dockerfile
@@ -63,7 +63,7 @@ services:
         condition: service_started
     restart: on-failure
 
-  auth_service:
+  auth-service:
     build:
       context: .
       dockerfile: auth_service.dockerfile
@@ -95,7 +95,7 @@ services:
         condition: service_started
     restart: on-failure
 
-  target_service:
+  target-service:
     build:
       context: .
       dockerfile: target_service.dockerfile
@@ -127,7 +127,7 @@ services:
         condition: service_started
     restart: on-failure
 
-  external_service:
+  external-service:
     build:
       context: .
       dockerfile: external_service.dockerfile

@@ -7,9 +7,9 @@ rule_files:
   - alert.yml
 
 scrape_configs:
-  - job_name: "api_gateway"
+  - job_name: "api-gateway"
     static_configs:
-      - targets: ["api_gateway:3010"]
+      - targets: ["api-gateway:3010"]
   - job_name: "mongo"
     static_configs:
       - targets: ["mongo:9216"]
