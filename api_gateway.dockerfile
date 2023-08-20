@@ -8,6 +8,6 @@ COPY package.json .
 
 RUN npm i
 
-EXPOSE 3000
+EXPOSE 3010
 
 CMD ["node", "api_gateway/index.js", "api_gateway"]
