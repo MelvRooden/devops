@@ -7,7 +7,7 @@ require("dotenv").config();
 const { isAuthorized, hasRole } = require("../middleware/auth");
 const multer = require("multer");
 
-const port = process.env.API_GATEWAY_PORT || 3000;
+const port = process.env.API_GATEWAY_PORT || 3010;
 
 const AUTH_SERVICE_URL =
   process.env.AUTH_SERVICE_URL || "http://127.0.0.1:3001";
